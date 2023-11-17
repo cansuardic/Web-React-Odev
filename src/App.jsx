@@ -1,9 +1,86 @@
 import "./App.css";
 import React from "react";
+function App() {
+  const [aramaMetni, setAramaMetni] = React.useState(
+    localStorage.getItem("aranan") || "React" || "Meric" 
+  );
+  const yaziListesi = [
+    {
+      baslik: "React Öğreniyorum",
+      url: "www.sdu.edu.tr",
+      yazar: "Sinan Yüksel",
+      yorum_sayisi: 3,
+      puan: 4,
+      id: 1,
+    },
+    {
+      baslik: "Web Teknolojileri ve Programlama",
+      url: "wwww.google.com.tr",
+      yazar: "Asim Yüksel",
+      yorum_sayisi: 2,
+      puan: 5,
+      id: 2,
+    },
+    {
+      baslik: "Cansu React Ögrendi",
+      url: "www.google.com.tr",
+      yazar: "Cansu Ardıç",
+      yorum_sayisi: 9,
+      puan: 10,
+      id: 3,
+    },
+    {
+      baslik: "Java Projelerim",
+      url:"www.google.com",
+      yazar : "Cansu Ardıç",
+      yorum_sayisi:89,
+      puan:8,
+      id:4,
+    },
+  ];
+  const arananYazilar = yaziListesi.filter(function (yazi) {
+    return yazi.baslik.toLowerCase().includes(aramaMetni.toLowerCase()) || yazi.yazar.toLowerCase().includes(aramaMetni.toLowerCase());
+  });
 
-function Yazi({ url, baslik, yazar, yorum_sayisi, puan, id }) {
+  const handleSearch = (event) => {
+    setAramaMetni(event.target.value);
+  };
+
+  React.useEffect(() => {
+    localStorage.setItem("aranan", aramaMetni);
+  }, [aramaMetni]);
+
   return (
-    <li key={id}>
+    <React.Fragment>
+      <h1>Selamlar!</h1>
+      <Arama aramaMetni={aramaMetni} onSearch={handleSearch} />
+      <hr />
+      <Liste yazilar={arananYazilar} />
+    </React.Fragment>
+  );
+}
+function Arama({ aramaMetni, onSearch }) {
+  return (
+    <>
+      <label htmlFor="arama">Ara: </label>
+      <input id="arama" type="text" onChange={onSearch} value={aramaMetni} />
+    </>
+  );
+}
+function Liste({ yazilar }) {
+  return (
+    <>
+      <ul>
+        {yazilar.map(function (yazi) {
+          return <Yazi key={yazi.id} {...yazi} />;
+        })}{" "}
+      </ul>
+    </>
+  );
+}
+function Yazi({ url, baslik, yazar, yorum_sayisi, puan }) {
+  return (
+    <li>
       <span>
         <a href={url}>{baslik}</a>,
       </span>
@@ -17,92 +94,6 @@ function Yazi({ url, baslik, yazar, yorum_sayisi, puan, id }) {
         <b>Puan:</b> {puan}
       </span>
     </li>
-  );
-}
-
-function Liste(props) {
-  return (
-    <ul>
-      {props.yazilar.map(function (yazi) {
-        return (
-          <Yazi key={yazi.id} {...yazi}>
-             
-          </Yazi>
-        );
-      })}{" "}
-    </ul>
-  );
-}
-function Arama({ aramaMetni, onSearch }) {
-  function handleChange(event) {
-    onSearch(event);
-  }
-  return (
-    <div>
-      <label htmlFor="arama">Ara: </label>
-      <input
-        id="arama"
-        type="text"
-        onChange={handleChange}
-        value={aramaMetni}
-      />
-    </div>
-  );
-}
-
-function App() {
-  const [aramaMetni, setAramaMetni] = React.useState(
-    localStorage.getItem("aranan") || "React"
-  );
-  const yaziListesi = [
-    {
-      baslik: "React Öğreniyorum",
-      url: "www.sdu.edu.tr",
-      yazar: "Sinan Yüksel",
-      yorum_sayisi: 3,
-      puan: 4,
-      id: 0,
-    },
-    {
-      baslik: "Web Teknolojileri ve Programlama",
-      url: "wwww.google.com.tr",
-      yazar: "Asım Yüksel",
-      yorum_sayisi: 2,
-      puan: 5,
-      id: 1,
-    },
-    {
-      baslik: "React Çalışmalarım",
-      url: "wwww.google.com.tr",
-      yazar: "cansu ardıç",
-      yorum_sayisi: 9,
-      puan: 5,
-      id: 7,
-    },
-  ];
-
-  React.useEffect(() => {
-    localStorage.setItem("aranan", aramaMetni);
-  }, [aramaMetni]);
-
-  const arananYazilar = yaziListesi.filter(function (yazi) {
-    return yazi.baslik.includes(aramaMetni);
-  });
-  // 1. asama callback handler methodu olusturma
-  function handleSearch(event) {
-    console.log(event.target.value);
-    setAramaMetni(event.target.value);
-  }
-  return (
-    <div>
-      <h1>Merhaba!</h1>
-      <Arama aramaMetni={aramaMetni} onSearch={handleSearch}></Arama>
-      <p>
-        <strong>{aramaMetni} araniyor...</strong>
-      </p>
-      <hr />
-      <Liste yazilar={arananYazilar} />
-    </div>
   );
 }
 export default App;
